@@ -29,21 +29,17 @@ Fraction::Fraction(int numerator_, int denominator_){
     reduce();
 }
 Fraction::Fraction(float num){
-        float numerator_= num;
+    float numerator_= num;
     int denominator_=1;
-    int sign = 0;
-    if (num >= 0){
-        sign = 1;   //positive
-    }else{
-        sign = -1;  //negative
+    for(int i=0; i<3 && (abs(numerator_)-floor(abs(numerator_))>0); i++){
+        denominator_ *=10;
+        numerator_*=10;
     }
-    while (numerator_-floor(abs(numerator_))>0)
-    {
-        denominator_ *= 10;
-        numerator_ *= 10;
-    }
-    numerator_ *=sign;
-    Fraction(static_cast<int>(numerator_), denominator_);
+    this->numerator = static_cast<int>(numerator_);
+    cout<<"numerator: "<<numerator<<endl;
+    this->denominator = denominator_;
+    cout<<"denominator: "<<denominator<<endl;
+    reduce();
 }
 Fraction::Fraction(const Fraction& other) {
     // Copy constructor
@@ -100,9 +96,14 @@ int Fraction::getDenominator() const{
 }
 void Fraction::setNumerator(int numerator_){
     this->numerator = numerator_;
+    reduce();
 }
 void Fraction::setDenominator(int denominator_){
+    if (denominator_ == 0){
+        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+    }
     this->denominator = denominator_;
+    reduce();
 }
 
 //---------- arithmetic operators: fraction operator fraction ----------//
@@ -155,21 +156,26 @@ bool Fraction::operator<=(const Fraction& other) const{
 
 //----------------- increment and decrement methods -----------------//
 Fraction& Fraction::operator++(){
-    int temp = this->denominator + this->numerator;
-    setNumerator(temp);
-    int gcd_val = gcd(numerator, denominator);
-    numerator /= gcd_val;
-    denominator /= gcd_val;
+    int newNumer = this->denominator + this->numerator;
+    setNumerator(newNumer);
     return *this;
 }
 Fraction Fraction::operator++(int){
-    return Fraction();
+    Fraction curr(*this);
+    int newNumer = this->denominator + this->numerator;
+    setNumerator(newNumer);
+    return curr;
 }
 Fraction& Fraction::operator--(){
+    int newNumer = this->denominator - this->numerator;
+    setNumerator(newNumer);
     return *this;
 }
 Fraction Fraction::operator--(int){
-    return Fraction();
+    Fraction curr(*this);
+    int newNumer = this->denominator - this->numerator;
+    setNumerator(newNumer);
+    return curr;
 }
 
 void Fraction::reduce(){
