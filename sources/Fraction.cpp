@@ -36,9 +36,7 @@ Fraction::Fraction(float num){
         numerator_*=10;
     }
     this->numerator = static_cast<int>(numerator_);
-    cout<<"numerator: "<<numerator<<endl;
     this->denominator = denominator_;
-    cout<<"denominator: "<<denominator<<endl;
     reduce();
 }
 Fraction::Fraction(const Fraction& other) {
@@ -49,20 +47,6 @@ Fraction::Fraction(const Fraction& other) {
 
 //-------------------------- convert method --------------------------//
 Fraction Fraction::convertToFraction(float num){
-    // const float EPSILON = 0.00001f;
-    // int sign = 0;
-    // if (num >= 0){
-    //     sign = 1;   //positive
-    // }else{
-    //     sign = -1;  //negative
-    // }
-    // num = abs(num);
-    // int whole = static_cast<int>(num);
-    // float remainder = num - whole;
-    // int gcd_value = gcd(static_cast<int>(round(remainder / EPSILON)), static_cast<int>(1 / EPSILON));
-    // int numerator_ = static_cast<int>(round((whole + remainder) / EPSILON));
-    // int denominator_ = static_cast<int>(round(1 / (remainder / gcd_value + EPSILON)));
-    // return Fraction(sign * numerator_, denominator_);
     float numerator_= num;
     int denominator_=1;
     int sign = 0;
@@ -80,11 +64,21 @@ Fraction Fraction::convertToFraction(float num){
     return Fraction(static_cast<int>(numerator_), denominator_);
 }
 
-int Fraction::gcd(int num1, int num2){
-    if (num2 == 0){
-        return num1;
+int Fraction::gcd(int num1, int num2) const{
+    num1 = abs(num1);
+    num2 = abs(num2);
+    while (num2 != 0)
+    {
+        int temp = num2;
+        num2 = num1%num2;
+        num1 = temp;
     }
-    return gcd(num2, num1%num2);
+    return num1;
+}
+
+int Fraction::lcm(int num1, int num2) const{
+    int gcd_value = gcd(num1, num2);
+    return (num1*num2) / gcd_value;
 }
 
 //-------------------------- getters & setters --------------------------//
@@ -136,22 +130,67 @@ Fraction Fraction::operator/(const float& other) const{
 
 //----------------------- comparison operators -----------------------//
 bool Fraction::operator==(const Fraction& other) const{
-    return true;
+    if (denominator == other.getDenominator()){
+        if (numerator == other.getNumerator()){
+            return true;
+        }
+    }
+    return false;
 }
 bool Fraction::operator!=(const Fraction& other) const{
+    if (denominator == other.getDenominator()){
+        if (numerator == other.getNumerator()){
+            return false;
+        }
+    }
     return true;
 }
 bool Fraction::operator>(const Fraction& other) const{
-    return true;
+    if(denominator == other.getDenominator()){
+        
+    }
+    int commonDen = lcm(denominator, other.getDenominator());
+    int factor1 = commonDen / denominator;
+    int factor2 = commonDen / other.getDenominator();
+    int myExtendedNum = denominator*factor1;
+    int otherExtendedNum = other.getNumerator()*factor2;
+    if (myExtendedNum >= otherExtendedNum){
+        return true;
+    }
+    return false;
 }
 bool Fraction::operator>=(const Fraction& other) const{
-    return true;
+    int commonDen = lcm(denominator, other.getDenominator());
+    int factor1 = commonDen / denominator;
+    int factor2 = commonDen / other.getDenominator();
+    int myExtendedNum = denominator*factor1;
+    int otherExtendedNum = other.getNumerator()*factor2;
+    if (myExtendedNum >= otherExtendedNum){
+        return true;
+    }
+    return false;
 }
 bool Fraction::operator<(const Fraction& other) const{
-    return true;
+    int commonDen = lcm(denominator, other.getDenominator());
+    int factor1 = commonDen / denominator;
+    int factor2 = commonDen / other.getDenominator();
+    int myExtendedNum = denominator*factor1;
+    int otherExtendedNum = other.getNumerator()*factor2;
+    if (myExtendedNum < otherExtendedNum){
+        return true;
+    }
+    return false;
 }
 bool Fraction::operator<=(const Fraction& other) const{
-    return true;
+    int commonDen = lcm(denominator, other.getDenominator());
+    int factor1 = commonDen / denominator;
+    int factor2 = commonDen / other.getDenominator();
+    int myExtendedNum = denominator*factor1;
+    int otherExtendedNum = other.getNumerator()*factor2;
+    if (myExtendedNum <= otherExtendedNum){
+        return true;
+    }
+    return false;
 }
 
 //----------------- increment and decrement methods -----------------//
