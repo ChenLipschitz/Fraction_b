@@ -65,7 +65,8 @@ namespace ariel{
             return is;
         }
         
-        int gcd(int num1, int num2);
+        int gcd(int num1, int num2) const;
+        int lcm(int num1, int num2) const;
         Fraction convertToFraction(float num);
         void reduce();
 
