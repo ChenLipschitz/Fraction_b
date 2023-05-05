@@ -146,15 +146,12 @@ bool Fraction::operator!=(const Fraction& other) const{
     return true;
 }
 bool Fraction::operator>(const Fraction& other) const{
-    if(denominator == other.getDenominator()){
-        
-    }
     int commonDen = lcm(denominator, other.getDenominator());
     int factor1 = commonDen / denominator;
     int factor2 = commonDen / other.getDenominator();
-    int myExtendedNum = denominator*factor1;
+    int myExtendedNum = numerator*factor1;
     int otherExtendedNum = other.getNumerator()*factor2;
-    if (myExtendedNum >= otherExtendedNum){
+    if (myExtendedNum > otherExtendedNum){
         return true;
     }
     return false;
@@ -163,7 +160,7 @@ bool Fraction::operator>=(const Fraction& other) const{
     int commonDen = lcm(denominator, other.getDenominator());
     int factor1 = commonDen / denominator;
     int factor2 = commonDen / other.getDenominator();
-    int myExtendedNum = denominator*factor1;
+    int myExtendedNum = numerator*factor1;
     int otherExtendedNum = other.getNumerator()*factor2;
     if (myExtendedNum >= otherExtendedNum){
         return true;
@@ -171,10 +168,10 @@ bool Fraction::operator>=(const Fraction& other) const{
     return false;
 }
 bool Fraction::operator<(const Fraction& other) const{
-    int commonDen = lcm(denominator, other.getDenominator());
+        int commonDen = lcm(denominator, other.getDenominator());
     int factor1 = commonDen / denominator;
     int factor2 = commonDen / other.getDenominator();
-    int myExtendedNum = denominator*factor1;
+    int myExtendedNum = numerator*factor1;
     int otherExtendedNum = other.getNumerator()*factor2;
     if (myExtendedNum < otherExtendedNum){
         return true;
@@ -182,10 +179,10 @@ bool Fraction::operator<(const Fraction& other) const{
     return false;
 }
 bool Fraction::operator<=(const Fraction& other) const{
-    int commonDen = lcm(denominator, other.getDenominator());
+        int commonDen = lcm(denominator, other.getDenominator());
     int factor1 = commonDen / denominator;
     int factor2 = commonDen / other.getDenominator();
-    int myExtendedNum = denominator*factor1;
+    int myExtendedNum = numerator*factor1;
     int otherExtendedNum = other.getNumerator()*factor2;
     if (myExtendedNum <= otherExtendedNum){
         return true;
