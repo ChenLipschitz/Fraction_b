@@ -231,13 +231,13 @@ Fraction Fraction::operator++(int){
     return curr;
 }
 Fraction& Fraction::operator--(){
-    int newNumer = this->denominator - this->numerator;
+    int newNumer = this->numerator - this->denominator;
     setNumerator(newNumer);
     return *this;
 }
 Fraction Fraction::operator--(int){
     Fraction curr(*this);
-    int newNumer = this->denominator - this->numerator;
+    int newNumer = this->numerator - this->denominator;
     setNumerator(newNumer);
     return curr;
 }
