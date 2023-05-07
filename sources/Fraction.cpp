@@ -102,21 +102,49 @@ void Fraction::setDenominator(int denominator_){
 
 //---------- arithmetic operators: fraction operator fraction ----------//
 Fraction Fraction::operator+(const Fraction& other) const{
-  return Fraction();  
+    int commonDen = lcm(denominator, other.getDenominator());
+    if (commonDen == 0){
+        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+    }
+    int factor1 = commonDen / denominator;
+    int factor2 = commonDen / other.getDenominator();
+    int myExtendedNum = numerator*factor1;
+    int otherExtendedNum = other.getNumerator()*factor2;
+    return Fraction(myExtendedNum+otherExtendedNum, commonDen);
 } 
 Fraction Fraction::operator-(const Fraction& other) const{
-    return Fraction();
+    int commonDen = lcm(denominator, other.getDenominator());
+    if (commonDen == 0){
+        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+    }
+    int factor1 = commonDen / denominator;
+    int factor2 = commonDen / other.getDenominator();
+    int myExtendedNum = numerator*factor1;
+    int otherExtendedNum = other.getNumerator()*factor2;
+    return Fraction(myExtendedNum-otherExtendedNum, commonDen);
 }
 Fraction Fraction::operator*(const Fraction& other) const{
-    return Fraction();
+    int newNumerator = numerator*other.getNumerator();
+    int newDenominator = denominator*other.getDenominator();
+    if (newDenominator == 0){
+        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+    }
+    return Fraction(newNumerator, newDenominator);
 }
 Fraction Fraction::operator/(const Fraction& other) const{
-    return Fraction();
+    int newNumerator = numerator*other.getDenominator();
+    int newDenominator = denominator*other.getNumerator();
+    if (newDenominator == 0){
+        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+    }
+    return Fraction(newNumerator, newDenominator);
 }
 
 //---------- arithmetic operators: fraction operator float ----------//
 Fraction Fraction::operator+(const float& other) const{
-  return Fraction();  
+  return Fraction();
+//   Fraction result = newFrac+this*;
+//   return result;  
 } 
 Fraction Fraction::operator-(const float& other) const{
     return Fraction();
@@ -168,7 +196,7 @@ bool Fraction::operator>=(const Fraction& other) const{
     return false;
 }
 bool Fraction::operator<(const Fraction& other) const{
-        int commonDen = lcm(denominator, other.getDenominator());
+    int commonDen = lcm(denominator, other.getDenominator());
     int factor1 = commonDen / denominator;
     int factor2 = commonDen / other.getDenominator();
     int myExtendedNum = numerator*factor1;
@@ -179,7 +207,7 @@ bool Fraction::operator<(const Fraction& other) const{
     return false;
 }
 bool Fraction::operator<=(const Fraction& other) const{
-        int commonDen = lcm(denominator, other.getDenominator());
+    int commonDen = lcm(denominator, other.getDenominator());
     int factor1 = commonDen / denominator;
     int factor2 = commonDen / other.getDenominator();
     int myExtendedNum = numerator*factor1;
@@ -218,8 +246,20 @@ void Fraction::reduce(){
     int gcd_value = gcd(numerator, denominator);
     numerator /= gcd_value;
     denominator /= gcd_value;
-    if (denominator < 0) {
-        numerator *= -1;
-        denominator *= -1;
+    // if (denominator < 0) {
+    //     numerator *= -1;
+    //     denominator *= -1;
+    // }
+    if(numerator < 0 && denominator < 0){
+         numerator = abs(numerator);
+         denominator = abs(denominator);
+    }
+    if((numerator > 0 && denominator < 0) || (numerator < 0 && denominator > 0)){
+        numerator = abs(numerator)*-1;
+        denominator = abs(denominator);
     }
 }
+
+// bool checkOverFlow(){
+
+// }
