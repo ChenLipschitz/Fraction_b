@@ -28,19 +28,49 @@ namespace ariel{
 
         //arithmetic operators: float operator fraction
         friend Fraction operator + (const float& num, const Fraction& fraction) {
-            return Fraction();
+            Fraction numAsAFraction(num), copyFraction(fraction);
+            int commonDen = copyFraction.lcm(copyFraction.getDenominator(), numAsAFraction.getDenominator());
+            if (commonDen == 0){
+                throw std::runtime_error("ERROR- The denominator cannot be 0");
+            }
+            int factor1 = commonDen / copyFraction.getDenominator();
+            int factor2 = commonDen / numAsAFraction.getDenominator();
+            int myExtendedNum = copyFraction.getNumerator()*factor1;
+            int otherExtendedNum = numAsAFraction.getNumerator()*factor2;
+            return Fraction(otherExtendedNum+myExtendedNum, commonDen);
         }
         friend Fraction operator - (const float& num, const Fraction& fraction) {
-            return Fraction();
+            Fraction numAsAFraction(num), copyFraction(fraction);
+            int commonDen = copyFraction.lcm(copyFraction.getDenominator(), numAsAFraction.getDenominator());
+            if (commonDen == 0){
+                throw std::runtime_error("ERROR- The denominator cannot be 0");
+            }
+            int factor1 = commonDen / copyFraction.getDenominator();
+            int factor2 = commonDen / numAsAFraction.getDenominator();
+            int myExtendedNum = copyFraction.getNumerator()*factor1;
+            int otherExtendedNum = numAsAFraction.getNumerator()*factor2;
+            return Fraction(otherExtendedNum-myExtendedNum, commonDen);
         }
         friend Fraction operator * (const float& num, const Fraction& fraction) {
-            return Fraction();
+            Fraction numAsAFraction(num), copyFraction(fraction);
+            int commonDen = copyFraction.getDenominator()*numAsAFraction.getDenominator();
+            if (commonDen == 0){
+                throw std::runtime_error("ERROR- The denominator cannot be 0");
+            }
+            int newNumerator = numAsAFraction.getNumerator()*copyFraction.getNumerator();
+            return Fraction(newNumerator, commonDen);
         }
         friend Fraction operator / (const float& num, const Fraction& fraction) {
-            return Fraction();
+           Fraction numAsAFraction(num), copyFraction(fraction);
+            int commonDen = copyFraction.getDenominator()*numAsAFraction.getNumerator();
+            if (commonDen == 0){
+                throw std::runtime_error("ERROR- The denominator cannot be 0");
+            }
+            int newNumerator = numAsAFraction.getNumerator()*copyFraction.getDenominator();
+            return Fraction(newNumerator, commonDen);
         }
         
-        //comparison operators
+        //comparison operators: fraction operator fraction
         bool operator==(const Fraction& other) const;
         bool operator!=(const Fraction& other) const;
         bool operator>(const Fraction& other) const;
@@ -48,6 +78,74 @@ namespace ariel{
         bool operator<(const Fraction& other) const;
         bool operator<=(const Fraction& other) const;
         
+        //comparison operators: float operator fraction
+        friend bool operator==(const float& num, const Fraction& fraction) {
+            Fraction numAsAFraction(num), copyFraction(fraction);
+            if (numAsAFraction.getDenominator() == copyFraction.getDenominator()){
+                if (numAsAFraction.getNumerator() == copyFraction.getNumerator()){
+                    return true;
+                }
+            }
+            return false;
+        }
+        friend bool operator!=(const float& num, const Fraction& fraction) {
+            Fraction numAsAFraction(num), copyFraction(fraction);
+            if (numAsAFraction.getDenominator() == copyFraction.getDenominator()){
+                if (numAsAFraction.getNumerator() == copyFraction.getNumerator()){
+                    return false;
+                }
+            }
+            return true;
+        }
+        friend bool operator>(const float& num, const Fraction& fraction) {
+            Fraction numAsAFraction(num), copyFraction(fraction);
+            int commonDen = numAsAFraction.lcm(copyFraction.getDenominator(), numAsAFraction.getDenominator());
+            int factor1 = commonDen / numAsAFraction.getDenominator();
+            int factor2 = commonDen / copyFraction.getDenominator();
+            int myExtendedNum = numAsAFraction.getNumerator()*factor1;
+            int otherExtendedNum = copyFraction.getNumerator()*factor2;
+            if (myExtendedNum > otherExtendedNum){
+                return true;
+            }
+            return false;
+        }
+        friend bool operator>=(const float& num, const Fraction& fraction) {
+            Fraction numAsAFraction(num), copyFraction(fraction);
+            int commonDen = numAsAFraction.lcm(copyFraction.getDenominator(), numAsAFraction.getDenominator());
+            int factor1 = commonDen / numAsAFraction.getDenominator();
+            int factor2 = commonDen / copyFraction.getDenominator();
+            int myExtendedNum = numAsAFraction.getNumerator()*factor1;
+            int otherExtendedNum = copyFraction.getNumerator()*factor2;
+            if (myExtendedNum >= otherExtendedNum){
+                return true;
+            }
+            return false;
+        }
+        friend bool operator<(const float& num, const Fraction& fraction) {
+            Fraction numAsAFraction(num), copyFraction(fraction);
+            int commonDen = numAsAFraction.lcm(copyFraction.getDenominator(), numAsAFraction.getDenominator());
+            int factor1 = commonDen / numAsAFraction.getDenominator();
+            int factor2 = commonDen / copyFraction.getDenominator();
+            int myExtendedNum = numAsAFraction.getNumerator()*factor1;
+            int otherExtendedNum = copyFraction.getNumerator()*factor2;
+            if (myExtendedNum < otherExtendedNum){
+                return true;
+            }
+            return false;
+        }
+        friend bool operator<=(const float& num, const Fraction& fraction) {
+            Fraction numAsAFraction(num), copyFraction(fraction);
+            int commonDen = numAsAFraction.lcm(copyFraction.getDenominator(), numAsAFraction.getDenominator());
+            int factor1 = commonDen / numAsAFraction.getDenominator();
+            int factor2 = commonDen / copyFraction.getDenominator();
+            int myExtendedNum = numAsAFraction.getNumerator()*factor1;
+            int otherExtendedNum = copyFraction.getNumerator()*factor2;
+            if (myExtendedNum <= otherExtendedNum){
+                return true;
+            }
+            return false;
+        }
+
         //increment and decrement methods
         Fraction& operator++();
         Fraction operator++(int);
@@ -69,6 +167,7 @@ namespace ariel{
         int lcm(int num1, int num2) const;
         Fraction convertToFraction(float num);
         void reduce();
+        // void checkOverFlow();
 
         private:
         int numerator;

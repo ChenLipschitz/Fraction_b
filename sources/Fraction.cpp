@@ -142,18 +142,46 @@ Fraction Fraction::operator/(const Fraction& other) const{
 
 //---------- arithmetic operators: fraction operator float ----------//
 Fraction Fraction::operator+(const float& other) const{
-  return Fraction();
-//   Fraction result = newFrac+this*;
-//   return result;  
+    Fraction otherFraction(other);
+    int commonDen = lcm(denominator, otherFraction.getDenominator());
+    if (commonDen == 0){
+        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+    }
+    int factor1 = commonDen / denominator;
+    int factor2 = commonDen / otherFraction.getDenominator();
+    int myExtendedNum = numerator*factor1;
+    int otherExtendedNum = otherFraction.getNumerator()*factor2;
+    return Fraction(myExtendedNum+otherExtendedNum, commonDen);
 } 
 Fraction Fraction::operator-(const float& other) const{
-    return Fraction();
+    Fraction otherFraction(other);
+    int commonDen = lcm(denominator, otherFraction.getDenominator());
+    if (commonDen == 0){
+        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+    }
+    int factor1 = commonDen / denominator;
+    int factor2 = commonDen / otherFraction.getDenominator();
+    int myExtendedNum = numerator*factor1;
+    int otherExtendedNum = otherFraction.getNumerator()*factor2;
+    return Fraction(myExtendedNum-otherExtendedNum, commonDen);
 }
 Fraction Fraction::operator*(const float& other) const{
-    return Fraction();
+    Fraction otherFraction(other);
+    int newNumerator = numerator*otherFraction.getNumerator();
+    int newDenominator = denominator*otherFraction.getDenominator();
+    if (newDenominator == 0){
+        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+    }
+    return Fraction(newNumerator, newDenominator);
 }
 Fraction Fraction::operator/(const float& other) const{
-    return Fraction();
+    Fraction otherFraction(other);
+    int newNumerator = numerator*otherFraction.getDenominator();
+    int newDenominator = denominator*otherFraction.getNumerator();
+    if (newDenominator == 0){
+        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+    }
+    return Fraction(newNumerator, newDenominator);
 }
 
 //----------------------- comparison operators -----------------------//
@@ -246,10 +274,10 @@ void Fraction::reduce(){
     int gcd_value = gcd(numerator, denominator);
     numerator /= gcd_value;
     denominator /= gcd_value;
-    // if (denominator < 0) {
-    //     numerator *= -1;
-    //     denominator *= -1;
-    // }
+    if(abs(numerator) == 0){
+        numerator = 0;
+        denominator = 1;
+    }
     if(numerator < 0 && denominator < 0){
          numerator = abs(numerator);
          denominator = abs(denominator);

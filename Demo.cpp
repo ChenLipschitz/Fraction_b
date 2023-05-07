@@ -35,5 +35,9 @@ int main() {
     if (a > 1.1) cout << " a is bigger than 1.1" << endl;
     else cout << " a is smaller than 1.1" << endl;
 
+    Fraction a(1, 2), b(1, 4);
+    Fraction c = a / b;
+    cout<<"a/b: "<<(a/b)<<endl;
+    cout<<"c: "<<c<<endl;
 
 }
