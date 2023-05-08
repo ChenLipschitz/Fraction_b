@@ -15,7 +15,6 @@ namespace ariel{
         Fraction();
         Fraction(int numerator, int denominator);
         Fraction(float num);
-        Fraction(const Fraction& other);    //copy constructor
         ~Fraction();
         int getNumerator() const;
         int getDenominator() const;
@@ -152,10 +151,33 @@ namespace ariel{
         //information for the following methods was taken from-
         //https://learn.microsoft.com/en-us/cpp/standard-library/overloading-the-output-operator-for-your-own-classes?view=msvc-170
         friend ostream& operator<<(std::ostream& outputs, const Fraction& fraction){
-            outputs << fraction.getNumerator() << "/" << fraction.getDenominator();
+            int gcd_value = fraction.gcd(fraction.getNumerator(), fraction.getDenominator());
+            int numerator_ = fraction.getNumerator() / gcd_value;
+            int denominator_ = fraction.getDenominator() / gcd_value;
+            if(numerator_<0 && denominator_<0){
+                numerator_ = abs(numerator_);
+                denominator_ = abs(denominator_);
+            }
+            if((numerator_>0 && denominator_<0) || (numerator_<0 && denominator_>0)){
+                numerator_ = abs(numerator_)*-1;
+                denominator_ = abs(denominator_);
+            }
+            outputs << numerator_ << '/' << denominator_;
             return outputs;
         }
-        friend istream& operator>>(std::istream& inputs, const Fraction& fraction){
+        friend istream& operator>>(std::istream& inputs, Fraction& fraction){
+            // inputs >> fraction.getNumerator() >> fraction.getDenominator();
+            int numerator_ = 0;
+            int denominator_ = 0;
+            inputs >> numerator_ >> denominator_;
+            if(denominator_ == 0){
+                throw runtime_error("ERROR- Denominator cannot be 0");
+            }
+            if (inputs.fail()) {
+                throw runtime_error("ERROR- Invalid argument, stream must include two arguments");
+            } 
+            fraction.setNumerator(numerator_);
+            fraction.setDenominator(denominator_);
             return inputs;
         }
         

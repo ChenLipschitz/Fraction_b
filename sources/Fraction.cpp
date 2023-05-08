@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <cmath>
 #include <limits>
-
+#include <utility>
 using namespace ariel;
 using namespace std;
 
@@ -15,7 +15,7 @@ Fraction::Fraction(){
 }
 Fraction::Fraction(int numerator_, int denominator_){
     if (denominator_ == 0){
-        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+        throw std::invalid_argument("ERROR- Denominator cannot be 0");
     }
     if(numerator_ < 0 && denominator_ < 0){
          numerator_ = abs(numerator_);
@@ -34,11 +34,6 @@ Fraction::Fraction(float num){
     this->numerator = static_cast<int>(round(numerator_));
     this->denominator = 1000;
     reduce();
-}
-Fraction::Fraction(const Fraction& other) {
-    // Copy constructor
-    this->numerator = other.getNumerator();
-    this->denominator = other.getDenominator();
 }
 // Destructor
     Fraction::~Fraction() {}
@@ -92,7 +87,7 @@ void Fraction::setNumerator(int numerator_){
 }
 void Fraction::setDenominator(int denominator_){
     if (denominator_ == 0){
-        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+        throw std::invalid_argument("ERROR- Denominator cannot be 0");
     }
     this->denominator = denominator_;
     reduce();
@@ -104,7 +99,7 @@ Fraction Fraction::operator+(const Fraction& other) const{
     if (commonDen == 0){
         throw std::runtime_error("ERROR- The common denominator cannot be 0");
     }
-    checkOverflow(Opr::Add, Fraction(other));
+    checkOverflow(Opr::Add, Fraction(other.getNumerator(), other.getDenominator()));
     int factor1 = commonDen / denominator;
     int factor2 = commonDen / other.getDenominator();
     int myExtendedNum = numerator*factor1;
@@ -116,7 +111,7 @@ Fraction Fraction::operator-(const Fraction& other) const{
     if (commonDen == 0){
         throw std::runtime_error("ERROR- The common denominator cannot be 0");
     }
-    checkOverflow(Opr::Sub, Fraction(other));
+    checkOverflow(Opr::Sub, Fraction(other.getNumerator(), other.getDenominator()));
     int factor1 = commonDen / denominator;
     int factor2 = commonDen / other.getDenominator();
     int myExtendedNum = numerator*factor1;
@@ -129,7 +124,7 @@ Fraction Fraction::operator*(const Fraction& other) const{
     if (newDenominator == 0){
         throw std::runtime_error("ERROR- The new denominator cannot be 0");
     }
-    checkOverflow(Opr::Mul, Fraction(other));
+    checkOverflow(Opr::Mul, Fraction(other.getNumerator(), other.getDenominator()));
     return Fraction(newNumerator, newDenominator);
 }
 Fraction Fraction::operator/(const Fraction& other) const{
@@ -138,7 +133,7 @@ Fraction Fraction::operator/(const Fraction& other) const{
     if (newDenominator == 0){
         throw std::runtime_error("ERROR- The new denominator cannot be 0");
     }
-    checkOverflow(Opr::Div, Fraction(other));
+    checkOverflow(Opr::Div, Fraction(other.getNumerator(), other.getDenominator()));
     return Fraction(newNumerator, newDenominator);
 }
 
