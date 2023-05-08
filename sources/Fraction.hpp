@@ -166,7 +166,6 @@ namespace ariel{
             return outputs;
         }
         friend istream& operator>>(std::istream& inputs, Fraction& fraction){
-            // inputs >> fraction.getNumerator() >> fraction.getDenominator();
             int numerator_ = 0;
             int denominator_ = 0;
             inputs >> numerator_ >> denominator_;
