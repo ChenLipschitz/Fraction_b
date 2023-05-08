@@ -147,8 +147,6 @@ namespace ariel{
         Fraction operator--(int);
 
         //output/input objects to an/from ostream object
-        //information for the following methods was taken from-
-        //https://learn.microsoft.com/en-us/cpp/standard-library/overloading-the-output-operator-for-your-own-classes?view=msvc-170
         friend ostream& operator<<(std::ostream& outputs, const Fraction& fraction){
             int gcd_value = fraction.gcd(fraction.getNumerator(), fraction.getDenominator());
             int numerator_ = fraction.getNumerator() / gcd_value;
