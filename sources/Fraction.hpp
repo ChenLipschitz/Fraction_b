@@ -15,7 +15,6 @@ namespace ariel{
         Fraction();
         Fraction(int numerator, int denominator);
         Fraction(float num);
-        ~Fraction();
         int getNumerator() const;
         int getDenominator() const;
         void setNumerator(int numerator_);

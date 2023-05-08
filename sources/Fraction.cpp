@@ -35,8 +35,6 @@ Fraction::Fraction(float num){
     this->denominator = 1000;
     reduce();
 }
-// Destructor
-    Fraction::~Fraction() {}
 
 //-------------------------- convert method --------------------------//
 Fraction Fraction::convertToFraction(float num){
