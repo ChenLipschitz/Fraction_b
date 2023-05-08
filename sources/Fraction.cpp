@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <cmath>
+#include <limits>
 
 using namespace ariel;
 using namespace std;
@@ -29,14 +30,9 @@ Fraction::Fraction(int numerator_, int denominator_){
     reduce();
 }
 Fraction::Fraction(float num){
-    float numerator_= num;
-    int denominator_=1;
-    for(int i=0; i<3 && (abs(numerator_)-floor(abs(numerator_))>0); i++){
-        denominator_ *=10;
-        numerator_*=10;
-    }
-    this->numerator = static_cast<int>(numerator_);
-    this->denominator = denominator_;
+    float numerator_ = num * 1000.0f; // Multiply by 1000 to get 3 decimal places
+    this->numerator = static_cast<int>(round(numerator_));
+    this->denominator = 1000;
     reduce();
 }
 Fraction::Fraction(const Fraction& other) {
@@ -44,6 +40,8 @@ Fraction::Fraction(const Fraction& other) {
     this->numerator = other.getNumerator();
     this->denominator = other.getDenominator();
 }
+// Destructor
+    Fraction::~Fraction() {}
 
 //-------------------------- convert method --------------------------//
 Fraction Fraction::convertToFraction(float num){
@@ -104,8 +102,9 @@ void Fraction::setDenominator(int denominator_){
 Fraction Fraction::operator+(const Fraction& other) const{
     int commonDen = lcm(denominator, other.getDenominator());
     if (commonDen == 0){
-        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+        throw std::runtime_error("ERROR- The common denominator cannot be 0");
     }
+    checkOverflow(Opr::Add, Fraction(other));
     int factor1 = commonDen / denominator;
     int factor2 = commonDen / other.getDenominator();
     int myExtendedNum = numerator*factor1;
@@ -115,8 +114,9 @@ Fraction Fraction::operator+(const Fraction& other) const{
 Fraction Fraction::operator-(const Fraction& other) const{
     int commonDen = lcm(denominator, other.getDenominator());
     if (commonDen == 0){
-        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+        throw std::runtime_error("ERROR- The common denominator cannot be 0");
     }
+    checkOverflow(Opr::Sub, Fraction(other));
     int factor1 = commonDen / denominator;
     int factor2 = commonDen / other.getDenominator();
     int myExtendedNum = numerator*factor1;
@@ -127,16 +127,18 @@ Fraction Fraction::operator*(const Fraction& other) const{
     int newNumerator = numerator*other.getNumerator();
     int newDenominator = denominator*other.getDenominator();
     if (newDenominator == 0){
-        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+        throw std::runtime_error("ERROR- The new denominator cannot be 0");
     }
+    checkOverflow(Opr::Mul, Fraction(other));
     return Fraction(newNumerator, newDenominator);
 }
 Fraction Fraction::operator/(const Fraction& other) const{
     int newNumerator = numerator*other.getDenominator();
     int newDenominator = denominator*other.getNumerator();
     if (newDenominator == 0){
-        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+        throw std::runtime_error("ERROR- The new denominator cannot be 0");
     }
+    checkOverflow(Opr::Div, Fraction(other));
     return Fraction(newNumerator, newDenominator);
 }
 
@@ -145,7 +147,7 @@ Fraction Fraction::operator+(const float& other) const{
     Fraction otherFraction(other);
     int commonDen = lcm(denominator, otherFraction.getDenominator());
     if (commonDen == 0){
-        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+        throw std::runtime_error("ERROR- The common denominator cannot be 0");
     }
     int factor1 = commonDen / denominator;
     int factor2 = commonDen / otherFraction.getDenominator();
@@ -157,7 +159,7 @@ Fraction Fraction::operator-(const float& other) const{
     Fraction otherFraction(other);
     int commonDen = lcm(denominator, otherFraction.getDenominator());
     if (commonDen == 0){
-        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+        throw std::runtime_error("ERROR- The cmmon denominator cannot be 0");
     }
     int factor1 = commonDen / denominator;
     int factor2 = commonDen / otherFraction.getDenominator();
@@ -170,7 +172,7 @@ Fraction Fraction::operator*(const float& other) const{
     int newNumerator = numerator*otherFraction.getNumerator();
     int newDenominator = denominator*otherFraction.getDenominator();
     if (newDenominator == 0){
-        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+        throw std::runtime_error("ERROR- The new denominator cannot be 0");
     }
     return Fraction(newNumerator, newDenominator);
 }
@@ -179,7 +181,7 @@ Fraction Fraction::operator/(const float& other) const{
     int newNumerator = numerator*otherFraction.getDenominator();
     int newDenominator = denominator*otherFraction.getNumerator();
     if (newDenominator == 0){
-        throw std::invalid_argument("ERROR- The denominator cannot be 0");
+        throw std::runtime_error("ERROR- The new denominator cannot be 0");
     }
     return Fraction(newNumerator, newDenominator);
 }
@@ -288,6 +290,51 @@ void Fraction::reduce(){
     }
 }
 
-// bool checkOverFlow(){
+void Fraction::checkOverflow(Opr opr, const Fraction& other) const{
+    const int max_limit = numeric_limits<int>::max();
+    const int min_limit = numeric_limits<int>::min();
+    switch(opr){
+        case Opr::Add:
+            if (other.getNumerator()>0 && numerator > max_limit-other.getNumerator())
+            {
+                throw std::overflow_error("ERROR- overflow");
+            }
+            if (other.getNumerator()<0 && other.getNumerator() < min_limit-other.getNumerator())
+            {
+                throw std::overflow_error("ERROR- overflow");
+            }
+            break;
+        case Opr::Sub:
+            if (numerator>0 && other.getNumerator()<0 && numerator > max_limit+other.getNumerator())
+            {
+                throw std::overflow_error("ERROR- overflow");
+            }
+            if (numerator<0 && other.getNumerator()>0 && numerator < min_limit+other.getNumerator())
+            {
+                throw std::overflow_error("ERROR- overflow");
+            }
+            break;
+        case Opr::Mul:
+            if (numerator>0 && other.getNumerator() > max_limit-numerator)
+            {
+                throw std::overflow_error("ERROR- overflow");
+            }
+            if (denominator>0 && other.getNumerator() > max_limit-denominator)
+            {
+                throw std::overflow_error("ERROR- overflow");
+            }
+            break; 
+        case Opr::Div:
+            if (numerator>0 && other.getNumerator() > max_limit-numerator)
+            {
+                throw std::overflow_error("ERROR- overflow");
+            }
+            if (denominator>0 && denominator-1 > max_limit-other.getDenominator())
+            {
+                throw std::overflow_error("ERROR- overflow");
+            }
+            break;   
+    }
 
-// }
+}
+
