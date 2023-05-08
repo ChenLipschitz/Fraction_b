@@ -62,7 +62,7 @@ namespace ariel{
         }
         friend Fraction operator / (const float& num, const Fraction& fraction) {
            Fraction numAsAFraction(num), copyFraction(fraction);
-            int commonDen = copyFraction.getDenominator()*numAsAFraction.getNumerator();
+            int commonDen = numAsAFraction.getDenominator()*copyFraction.getNumerator();
             if (commonDen == 0){
                 throw std::runtime_error("ERROR- The denominator cannot be 0");
             }
